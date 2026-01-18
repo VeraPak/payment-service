@@ -17,8 +17,9 @@ public class HttpServer {
             System.out.println("New client connected");
 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
             ) {
+
                 while (!br.ready()) ;
                 String fileName = br.readLine().split(" ")[1];
                 URL resource = HttpServer.class.getClassLoader().getResource("static" + fileName);
@@ -33,17 +34,21 @@ public class HttpServer {
                 }
 
                 Path filePath = Paths.get(resource.toURI());
-                byte[] content = Files.readAllBytes(filePath);
+
                 String contentType = Files.probeContentType(filePath);
-                String response = new String(content, StandardCharsets.UTF_8);
+                long contentLength = Files.size(filePath);
 
                 out.write("HTTP/1.1 200 OK\r\n");
                 out.write("Content-Type: " + contentType + "\r\n");
-                out.write("Content-Length: " + content.length + "\r\n");
+                out.write("Content-Length: " + contentLength + "\r\n");
                 out.write("\r\n");
-                out.write(response);
                 out.flush();
 
+                OutputStream os = socket.getOutputStream();
+                try (InputStream is = Files.newInputStream(filePath)) {
+                    is.transferTo(os);
+                }
+                os.flush();
 
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
