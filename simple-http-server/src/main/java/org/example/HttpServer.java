@@ -9,56 +9,78 @@ import java.nio.file.Paths;
 
 public class HttpServer {
 
-    public static void main(String[] args) throws IOException {
-        Path templatesDir;
-        if (args.length == 0) {
-            System.exit(1);
-        }
-        templatesDir = Paths.get(args[0]);
-        if(!Files.isDirectory(templatesDir)){
-            System.exit(1);
-        }
+    public static void main(String[] args) {
+        Path templatesDir = validateArgs(args);
 
         int port = 8080;
         try(ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server started at http://localhost:" + port);
 
-            try (Socket socket = serverSocket.accept();
-                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
-            ) {
+            try (Socket clientSocket = serverSocket.accept()) {
                 System.out.println("New client connected");
-
-                while (!br.ready());
-
-                String fileName = br.readLine().split(" ")[1].substring(1);
-                Path filePath = templatesDir.resolve(fileName).normalize();
-                if (!filePath.startsWith(templatesDir) ||
-                        !Files.exists(filePath) ||
-                        !Files.isRegularFile(filePath)) {
-                    out.write("HTTP/1.1 404 Not Found\r\n");
-                    out.write("Content-Type: text/html; charset=UTF-8\r\n");
-                    out.write("\r\n");
-                    out.flush();
-
-                    return;
-                }
-
-                String contentType = Files.probeContentType(filePath);
-                long contentLength = Files.size(filePath);
-
-                out.write("HTTP/1.1 200 OK\r\n");
-                out.write("Content-Type: " + contentType + "\r\n");
-                out.write("Content-Length: " + contentLength + "\r\n");
-                out.write("\r\n");
-                out.flush();
-
-                OutputStream os = socket.getOutputStream();
-                try (InputStream is = Files.newInputStream(filePath)) {
-                    is.transferTo(os);
-                }
-                os.flush();
+                handleClient(clientSocket, templatesDir);
             }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
+
+    private static Path validateArgs(String[] args) {
+        if (args.length == 0) {
+            System.exit(1);
+        }
+
+        Path dir = Paths.get(args[0]).toAbsolutePath().normalize();
+        if (!Files.isDirectory(dir)) {
+            System.exit(1);
+        }
+        return dir;
+    }
+
+    private static void handleClient(Socket clientSocket, Path templatesDir) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
+             OutputStream outputStream = clientSocket.getOutputStream()
+        ) {
+            while (!br.ready()) ;
+
+            String fileName = br.readLine().split(" ")[1].substring(1);
+            Path filePath = templatesDir.resolve(fileName).normalize();
+            if (!filePath.startsWith(templatesDir) ||
+                    !Files.exists(filePath) ||
+                    !Files.isRegularFile(filePath)) {
+                send404(outputStream);
+                return;
+            }
+            sendFile(outputStream, filePath);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void send404(OutputStream outputStream) throws IOException {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+            bufferedWriter.write("HTTP/1.1 404 Not Found\r\n");
+            bufferedWriter.write("Content-Type: text/html; charset=UTF-8\r\n");
+            bufferedWriter.write("\r\n");
+            bufferedWriter.flush();
+        }
+    }
+
+    private static void sendFile(OutputStream out, Path filePath) throws IOException {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(out));
+             InputStream is = Files.newInputStream(filePath)) {
+
+            String contentType = Files.probeContentType(filePath);
+            long contentLength = Files.size(filePath);
+
+            bufferedWriter.write("HTTP/1.1 200 OK\r\n");
+            bufferedWriter.write("Content-Type: " + contentType + "\r\n");
+            bufferedWriter.write("Content-Length: " + contentLength + "\r\n");
+            bufferedWriter.write("\r\n");
+            bufferedWriter.flush();
+
+            is.transferTo(out);
+        }
+    }
+
 }
