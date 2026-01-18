@@ -9,22 +9,33 @@ import java.nio.file.Paths;
 
 public class HttpServer {
 
-    public static void main(String[] args) {
-        try(ServerSocket serverSocket = new ServerSocket(8080)) {
-            System.out.println("Server started at http://localhost:8080");
+    public static void main(String[] args) throws IOException {
+        Path templatesDir;
+        if (args.length == 0) {
+            System.exit(1);
+        }
+        templatesDir = Paths.get(args[0]);
+        if(!Files.isDirectory(templatesDir)){
+            System.exit(1);
+        }
 
-            Socket socket = serverSocket.accept();
-            System.out.println("New client connected");
+        int port = 8080;
+        try(ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Server started at http://localhost:" + port);
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            try (Socket socket = serverSocket.accept();
+                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
                  BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
             ) {
+                System.out.println("New client connected");
 
-                while (!br.ready()) ;
-                String fileName = br.readLine().split(" ")[1];
-                URL resource = HttpServer.class.getClassLoader().getResource("static" + fileName);
+                while (!br.ready());
 
-                if (resource == null) {
+                String fileName = br.readLine().split(" ")[1].substring(1);
+                Path filePath = templatesDir.resolve(fileName).normalize();
+                if (!filePath.startsWith(templatesDir) ||
+                        !Files.exists(filePath) ||
+                        !Files.isRegularFile(filePath)) {
                     out.write("HTTP/1.1 404 Not Found\r\n");
                     out.write("Content-Type: text/html; charset=UTF-8\r\n");
                     out.write("\r\n");
@@ -32,8 +43,6 @@ public class HttpServer {
 
                     return;
                 }
-
-                Path filePath = Paths.get(resource.toURI());
 
                 String contentType = Files.probeContentType(filePath);
                 long contentLength = Files.size(filePath);
@@ -49,13 +58,7 @@ public class HttpServer {
                     is.transferTo(os);
                 }
                 os.flush();
-
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
             }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
