@@ -4,7 +4,7 @@ public class Payment {
     private long id;
     private double value;
 
-    public Payment(double value, long id) {
+    public Payment(double value, long id)
         this.value = value;
         this.id = id;
     }
