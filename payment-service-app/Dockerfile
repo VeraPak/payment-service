@@ -1,10 +1,15 @@
-# Используем минимальный runtime-образ с JDK 21
-FROM eclipse-temurin:21-jre-alpine
-# Задаем переменную окружения с названием jar-файла, можно переопределить при сборке
-ARG JAR_FILE=app.jar
-# Создаём рабочую директорию приложения
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
-# Копируем jar-файл в контейнер
-COPY target/${JAR_FILE} app.jar
-# Запускаем приложение
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+COPY pom.xml .
+RUN mvn -q -e -DskipTests dependency:go-offline
+
+COPY src ./src
+RUN mvn -q -DskipTests package
+
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
