@@ -1,4 +1,4 @@
-package com.iprody.payment.service.app.model;
+package com.iprody.payment.service.app.persistence.entity;
 
 public enum PaymentStatus {
     RECEIVED,
