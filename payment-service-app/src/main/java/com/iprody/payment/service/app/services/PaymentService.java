@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+
+    public PaymentService(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
 
     public Payment findById(UUID guid) {
         return paymentRepository.findById(guid).orElseThrow(() -> new ResponseStatusException(
