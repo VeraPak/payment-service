@@ -34,19 +34,19 @@ public class PaymentController {
 
     @GetMapping("/search")
     public Page<Payment> search(@ModelAttribute PaymentFilter filter,
-                                @RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "20") int size,
-                                @RequestParam(defaultValue = "guid") String sortBy,
-                                @RequestParam(defaultValue = "desc") String direction
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size,
+        @RequestParam(defaultValue = "guid") String sortBy,
+        @RequestParam(defaultValue = "desc") String direction
     ) {
         System.out.println(filter);
-        Sort sort = switch (direction) {
+        final Sort sort = switch (direction) {
             case "asc" -> Sort.by(sortBy).ascending();
             case "desc" -> Sort.by(sortBy).descending();
             default -> throw new IllegalArgumentException("Unexpected value : " + direction);
         };
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+        final Pageable pageable = PageRequest.of(page, size, sort);
         return paymentService.searchPaged(filter, pageable);
     }
 }

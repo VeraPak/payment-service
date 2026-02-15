@@ -4,13 +4,11 @@ import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
 import com.iprody.payment.service.app.persistence.entity.Payment;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -35,15 +33,13 @@ public class PaymentService {
         return this.paymentRepository.findAll();
     }
 
-    @GetMapping
     public List<Payment> search(PaymentFilter filter) {
-        Specification<Payment> spec = PaymentFilterFactory.fromFilter(filter);
+        final Specification<Payment> spec = PaymentFilterFactory.fromFilter(filter);
         return paymentRepository.findAll(spec);
     }
 
-    @GetMapping
     public Page<Payment> searchPaged(PaymentFilter filter, Pageable pageable) {
-        Specification<Payment> spec = PaymentFilterFactory.fromFilter(filter);
+        final Specification<Payment> spec = PaymentFilterFactory.fromFilter(filter);
         return paymentRepository.findAll(spec, pageable);
     }
 
