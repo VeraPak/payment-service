@@ -8,11 +8,10 @@ import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,16 +25,9 @@ public class PaymentService {
         this.paymentMapper = paymentMapper;
     }
 
-    public PaymentDto findById(UUID guid) {
+    public Optional<PaymentDto> findById(UUID guid) {
         return paymentRepository.findById(guid)
-            .map(paymentMapper::toPaymentDto).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Payment not found"
-            ));
-    }
-
-    public List<PaymentDto> findAll() {
-        return paymentRepository.findAll().stream().map(paymentMapper::toPaymentDto).toList();
+            .map(paymentMapper::toPaymentDto);
     }
 
     public List<PaymentDto> search(PaymentFilter filter) {

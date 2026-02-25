@@ -9,10 +9,10 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Setter
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class CreatePaymentDto {
 
     private UUID inquiryRefId;

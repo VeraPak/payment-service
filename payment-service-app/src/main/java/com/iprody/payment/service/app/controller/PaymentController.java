@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,12 +24,7 @@ public class PaymentController {
 
     @GetMapping("/{guid}")
     public PaymentDto findById(@PathVariable UUID guid) {
-        return paymentService.findById(guid);
-    }
-
-    @GetMapping()
-    public List<PaymentDto> findAll() {
-        return paymentService.findAll();
+        return paymentService.findById(guid).get();
     }
 
     @GetMapping("/search")
