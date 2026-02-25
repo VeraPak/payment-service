@@ -1,7 +1,8 @@
 package com.iprody.payment.service.app.controller;
 
+import com.iprody.payment.service.app.dto.PaymentDto;
+import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
-import com.iprody.payment.service.app.persistence.entity.Payment;
 import com.iprody.payment.service.app.services.PaymentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,17 +24,17 @@ public class PaymentController {
     }
 
     @GetMapping("/{guid}")
-    public Payment findById(@PathVariable UUID guid) {
+    public PaymentDto findById(@PathVariable UUID guid) {
         return paymentService.findById(guid);
     }
 
     @GetMapping()
-    public List<Payment> findAll() {
+    public List<PaymentDto> findAll() {
         return paymentService.findAll();
     }
 
     @GetMapping("/search")
-    public Page<Payment> search(@ModelAttribute PaymentFilter filter,
+    public Page<PaymentDto> search(@ModelAttribute PaymentFilter filter,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size,
         @RequestParam(defaultValue = "guid") String sortBy,
@@ -48,5 +49,10 @@ public class PaymentController {
 
         final Pageable pageable = PageRequest.of(page, size, sort);
         return paymentService.searchPaged(filter, pageable);
+    }
+
+    @PostMapping
+    public PaymentDto create(@RequestBody CreatePaymentDto dto) {
+        return paymentService.create(dto);
     }
 }

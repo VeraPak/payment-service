@@ -2,6 +2,10 @@ package com.iprody.payment.service.app.persistence.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -9,9 +13,13 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "payments")
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
     @Id
-    @Column(nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID guid;
 
     @Column(nullable = false, name = "inquiry_ref_id")
@@ -39,78 +47,16 @@ public class Payment {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
-    public Payment() {
+    @PrePersist
+    public void prePersist() {
+        final OffsetDateTime now = OffsetDateTime.now();
+        createdAt = now;
+        updatedAt = now;
     }
 
-    public UUID getGuid() {
-        return guid;
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = OffsetDateTime.now();
     }
 
-    public void setGuid(UUID guid) {
-        this.guid = guid;
-    }
-
-    public UUID getInquiryRefId() {
-        return inquiryRefId;
-    }
-
-    public void setInquiryRefId(UUID inquiryRefId) {
-        this.inquiryRefId = inquiryRefId;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public UUID getTransactionRefId() {
-        return transactionRefId;
-    }
-
-    public void setTransactionRefId(UUID transactionRefId) {
-        this.transactionRefId = transactionRefId;
-    }
-
-    public PaymentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public OffsetDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(OffsetDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }
