@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID guid;
+    private UUID id;
 
     @Column(nullable = false, name = "inquiry_ref_id")
     private UUID inquiryRefId;

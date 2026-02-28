@@ -7,7 +7,7 @@ databaseChangeLog:
             tableName: payments
             columns:
               - column:
-                  name: guid
+                  name: id
                   type: uuid
                   constraints:
                     primaryKey: true

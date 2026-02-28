@@ -16,7 +16,7 @@ import java.util.UUID;
 @Setter
 public class PaymentDto {
 
-    private UUID guid;
+    private UUID id;
 
     private UUID inquiryRefId;
 
