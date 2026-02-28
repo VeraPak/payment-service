@@ -1,11 +1,13 @@
 package com.iprody.payment.service.app.services;
 
+import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.mapper.PaymentMapper;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
 import com.iprody.payment.service.app.persistence.entity.Payment;
 import com.iprody.payment.service.app.persistence.entity.PaymentStatus;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +44,7 @@ class PaymentServiceTest {
     @InjectMocks
     private PaymentService paymentService;
 
-    private UUID guid;
+    private UUID id;
     private Payment payment;
     private PaymentDto paymentDto;
 
@@ -58,25 +60,19 @@ class PaymentServiceTest {
 
     static Stream<PaymentFilter> filterProvider() {
         PaymentFilter byCurrency = new PaymentFilter("USD", null, null, null, null, null);
-
         PaymentFilter byMinAmount = new PaymentFilter(null, new BigDecimal("100"), null, null, null, null);
-
         PaymentFilter byMaxAmount = new PaymentFilter(null, null, new BigDecimal("500"), null, null, null);
-
         PaymentFilter afterDate = new PaymentFilter(null, null, null, Instant.parse("2025-01-14T10:00:00Z"), null, null);
-
         PaymentFilter beforeDate = new PaymentFilter(null, null, null, null, Instant.parse("2025-01-15T10:00:00Z"), null);
-
         PaymentFilter byStatus = new PaymentFilter(null, null, null, null, null, PaymentStatus.APPROVED);
-
         return Stream.of(byCurrency, byMinAmount, byMaxAmount, afterDate, beforeDate, byStatus);
     }
 
     @BeforeEach
     void setUp() {
-        guid = UUID.randomUUID();
+        id = UUID.randomUUID();
         payment = new Payment();
-        payment.setGuid(guid);
+        payment.setId(id);
         payment.setInquiryRefId(UUID.randomUUID());
         payment.setAmount(new BigDecimal("100.00"));
         payment.setCurrency("USD");
@@ -85,7 +81,7 @@ class PaymentServiceTest {
         payment.setUpdatedAt(Instant.parse("2025-01-15T10:00:00Z"));
 
         paymentDto = new PaymentDto();
-        paymentDto.setGuid(payment.getGuid());
+        paymentDto.setId(payment.getId());
         paymentDto.setInquiryRefId(payment.getInquiryRefId());
         paymentDto.setAmount(payment.getAmount());
         paymentDto.setCurrency(payment.getCurrency());
@@ -99,33 +95,31 @@ class PaymentServiceTest {
     @Test
     void findById_whenPaymentExists() {
         // given
-        when(paymentRepository.findById(guid)).thenReturn(Optional.ofNullable(payment));
+        when(paymentRepository.findById(id)).thenReturn(Optional.ofNullable(payment));
         when(paymentMapper.toPaymentDto(payment)).thenReturn(paymentDto);
 
         // when
-        Optional<PaymentDto> mappedPaymentDto = paymentService.findById(guid);
+        PaymentDto mappedPaymentDto = paymentService.findById(id);
 
         // then
-        assertThat(mappedPaymentDto).isPresent();
-        assertThat(mappedPaymentDto.get()).isEqualTo(paymentDto);
+        assertThat(mappedPaymentDto).isEqualTo(paymentDto);
 
-        verify(paymentRepository).findById(guid);
+        verify(paymentRepository).findById(id);
         verify(paymentMapper).toPaymentDto(payment);
     }
 
     @Test
     void findById_whenPaymentMissing() {
         // given
-        UUID guid = UUID.randomUUID();
-        when(paymentRepository.findById(guid)).thenReturn(Optional.empty());
+        UUID id = UUID.randomUUID();
+        when(paymentRepository.findById(id)).thenReturn(Optional.empty());
 
-        // when
-        Optional<PaymentDto> mappedPaymentDto = paymentService.findById(guid);
+        // when // then
+        assertThatThrownBy(() -> paymentService.findById(id))
+            .isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("Payment with id " + id + " not found");
 
-        // then
-        assertThat(mappedPaymentDto).isEmpty();
-
-        verify(paymentRepository).findById(guid);
+        verify(paymentRepository).findById(id);
     }
 
     @ParameterizedTest
@@ -135,41 +129,23 @@ class PaymentServiceTest {
         payment.setStatus(status);
         paymentDto.setStatus(status);
 
-        when(paymentRepository.findById(guid)).thenReturn(Optional.ofNullable(payment));
+        when(paymentRepository.findById(id)).thenReturn(Optional.ofNullable(payment));
         when(paymentMapper.toPaymentDto(payment)).thenReturn(paymentDto);
 
         // when
-        Optional<PaymentDto> mappedPaymentDto = paymentService.findById(guid);
+        PaymentDto mappedPaymentDto = paymentService.findById(id);
 
         // then
-        assertThat(mappedPaymentDto).isPresent();
-        assertThat(mappedPaymentDto.get().getStatus()).isEqualTo(status);
+        assertThat(mappedPaymentDto.getStatus()).isEqualTo(status);
 
-        verify(paymentRepository).findById(guid);
+        verify(paymentRepository).findById(id);
         verify(paymentMapper).toPaymentDto(payment);
     }
 
     @ParameterizedTest
     @MethodSource("filterProvider")
-    void search_shouldReturnMappedList_forDifferentFilters(PaymentFilter filter) {
+    void searchPaged_shouldReturnCorrectPageData(PaymentFilter filter) {
         // given
-        when(paymentRepository.findAll(any(Specification.class))).thenReturn(List.of(payment));
-        when(paymentMapper.toPaymentDto(payment)).thenReturn(paymentDto);
-
-        // when
-        List<PaymentDto> result = paymentService.search(filter);
-
-        // then
-        assertThat(result).containsExactly(paymentDto);
-
-        verify(paymentRepository).findAll(any(Specification.class));
-        verify(paymentMapper).toPaymentDto(payment);
-    }
-
-    @Test
-    void searchPaged_shouldReturnCorrectPageData() {
-        // given
-        PaymentFilter filter = new PaymentFilter(null, null, null, null, null, null);
         Pageable pageable = PageRequest.of(0, 25, Sort.by("amount").ascending());
         Page<Payment> page = new PageImpl<>(List.of(payment));
 
@@ -205,4 +181,148 @@ class PaymentServiceTest {
 
         verify(paymentRepository).findAll(any(Specification.class), eq(pageable));
     }
+
+    void create_shouldReturnCreatedPayment() {
+        // given
+        CreatePaymentDto createDto = new CreatePaymentDto();
+        createDto.setInquiryRefId(payment.getInquiryRefId());
+        createDto.setAmount(payment.getAmount());
+        createDto.setCurrency(payment.getCurrency());
+        createDto.setTransactionRefId(payment.getTransactionRefId());
+        createDto.setStatus(PaymentStatus.APPROVED);
+        createDto.setNote(payment.getNote());
+
+        when(paymentMapper.fromCreatePaymentDto(createDto)).thenReturn(payment);
+        when(paymentRepository.save(payment)).thenReturn(payment);
+        when(paymentMapper.toPaymentDto(payment)).thenReturn(paymentDto);
+
+        // when
+        PaymentDto resultDto = paymentService.create(createDto);
+
+        // then
+        assertThat(resultDto).isEqualTo(payment);
+
+        verify(paymentMapper).fromCreatePaymentDto(createDto);
+        verify(paymentRepository).save(payment);
+        verify(paymentMapper).toPaymentDto(payment);
+    }
+
+    /// ///////////
+
+    @Test
+    void update_shouldUpdateExistingPayment() {
+        // given
+        when(paymentRepository.findById(id)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(payment)).thenReturn(payment);
+        when(paymentMapper.toPaymentDto(payment)).thenReturn(paymentDto);
+
+        // when
+        PaymentDto result = paymentService.update(id, paymentDto);
+
+        // then
+        assertThat(result).isEqualTo(paymentDto);
+        assertThat(payment.getAmount()).isEqualTo(paymentDto.getAmount());
+        assertThat(payment.getNote()).isEqualTo(paymentDto.getNote());
+        assertThat(payment.getStatus()).isEqualTo(paymentDto.getStatus());
+
+        verify(paymentRepository).findById(id);
+        verify(paymentRepository).save(payment);
+        verify(paymentMapper).toPaymentDto(payment);
+    }
+
+    @Test
+    void delete_shouldRemovePayment() {
+        // given
+        when(paymentRepository.findById(id)).thenReturn(Optional.of(payment));
+
+        // when
+        paymentService.delete(id);
+
+        // then
+        verify(paymentRepository).findById(id);
+        verify(paymentRepository).delete(payment);
+    }
+
+    @Test
+    void delete_whenPaymentMissing_shouldThrowException() {
+        // given
+        UUID missingId = UUID.randomUUID();
+        when(paymentRepository.findById(missingId)).thenReturn(Optional.empty());
+
+        // when // then
+        assertThatThrownBy(() -> paymentService.delete(missingId))
+            .isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("Payment with id " + missingId + " not found");
+
+        verify(paymentRepository).findById(missingId);
+        verify(paymentRepository, never()).delete(any(Payment.class));
+    }
+
+    @Test
+    void updateStatus_shouldChangePaymentStatus() {
+        // given
+        PaymentStatus newStatus = PaymentStatus.RECEIVED;
+        when(paymentRepository.findById(id)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(payment)).thenReturn(payment);
+        when(paymentMapper.toPaymentDto(payment)).thenReturn(paymentDto);
+
+        // when
+        PaymentDto result = paymentService.updateStatus(id, newStatus);
+
+        // then
+        assertThat(result).isEqualTo(paymentDto);
+        assertThat(payment.getStatus()).isEqualTo(newStatus);
+        verify(paymentRepository).findById(id);
+        verify(paymentRepository).save(payment);
+        verify(paymentMapper).toPaymentDto(payment);
+    }
+
+    @Test
+    void updateStatus_whenPaymentMissing_shouldThrowException() {
+        // given
+        UUID missingId = UUID.randomUUID();
+        when(paymentRepository.findById(missingId)).thenReturn(Optional.empty());
+
+        // when //then
+        assertThatThrownBy(() -> paymentService.updateStatus(missingId, PaymentStatus.RECEIVED))
+            .isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("Payment with id " + missingId + " not found");
+
+        verify(paymentRepository).findById(missingId);
+        verify(paymentRepository, never()).save(any(Payment.class));
+    }
+
+    @Test
+    void updateNote_shouldChangePaymentNote() {
+        // given
+        String newNote = "New note";
+        when(paymentRepository.findById(id)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(payment)).thenReturn(payment);
+        when(paymentMapper.toPaymentDto(payment)).thenReturn(paymentDto);
+
+        // when
+        PaymentDto result = paymentService.updateNote(id, newNote);
+
+        // then
+        assertThat(result).isEqualTo(paymentDto);
+        assertThat(payment.getNote()).isEqualTo(newNote);
+        verify(paymentRepository).findById(id);
+        verify(paymentRepository).save(payment);
+        verify(paymentMapper).toPaymentDto(payment);
+    }
+    @Test
+    void updateNote_whenPaymentMissing_shouldThrowException() {
+        // given
+        UUID missingId = UUID.randomUUID();
+        when(paymentRepository.findById(missingId)).thenReturn(Optional.empty());
+
+        // when // then
+        assertThatThrownBy(() -> paymentService.updateNote(missingId, "New note"))
+            .isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("Payment with id " + missingId + " not found");
+
+        verify(paymentRepository).findById(missingId);
+        verify(paymentRepository, never()).save(any(Payment.class));
+    }
+
 }
