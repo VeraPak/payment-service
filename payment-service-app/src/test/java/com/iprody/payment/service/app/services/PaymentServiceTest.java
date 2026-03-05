@@ -2,12 +2,12 @@ package com.iprody.payment.service.app.services;
 
 import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.dto.PaymentDto;
+import com.iprody.payment.service.app.exception.EntityNotFoundException;
 import com.iprody.payment.service.app.mapper.PaymentMapper;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
 import com.iprody.payment.service.app.persistence.entity.Payment;
 import com.iprody.payment.service.app.persistence.entity.PaymentStatus;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -117,7 +117,7 @@ class PaymentServiceTest {
         // when // then
         assertThatThrownBy(() -> paymentService.findById(id))
             .isInstanceOf(EntityNotFoundException.class)
-            .hasMessage("Payment with id " + id + " not found");
+            .hasMessage("Платеж не найден");
 
         verify(paymentRepository).findById(id);
     }
@@ -252,7 +252,7 @@ class PaymentServiceTest {
         // when // then
         assertThatThrownBy(() -> paymentService.delete(missingId))
             .isInstanceOf(EntityNotFoundException.class)
-            .hasMessage("Payment with id " + missingId + " not found");
+            .hasMessage("Платеж не найден");
 
         verify(paymentRepository).findById(missingId);
         verify(paymentRepository, never()).delete(any(Payment.class));
@@ -286,7 +286,7 @@ class PaymentServiceTest {
         // when //then
         assertThatThrownBy(() -> paymentService.updateStatus(missingId, PaymentStatus.RECEIVED))
             .isInstanceOf(EntityNotFoundException.class)
-            .hasMessage("Payment with id " + missingId + " not found");
+            .hasMessage("Платеж не найден");
 
         verify(paymentRepository).findById(missingId);
         verify(paymentRepository, never()).save(any(Payment.class));
@@ -319,7 +319,7 @@ class PaymentServiceTest {
         // when // then
         assertThatThrownBy(() -> paymentService.updateNote(missingId, "New note"))
             .isInstanceOf(EntityNotFoundException.class)
-            .hasMessage("Payment with id " + missingId + " not found");
+            .hasMessage("Платеж не найден");
 
         verify(paymentRepository).findById(missingId);
         verify(paymentRepository, never()).save(any(Payment.class));
