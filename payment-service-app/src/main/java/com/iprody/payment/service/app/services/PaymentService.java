@@ -1,14 +1,15 @@
 package com.iprody.payment.service.app.services;
 
-import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.dto.CreatePaymentDto;
+import com.iprody.payment.service.app.dto.PaymentDto;
+import com.iprody.payment.service.app.exception.EntityNotFoundException;
+import com.iprody.payment.service.app.exception.errorhandle.OperationType;
 import com.iprody.payment.service.app.mapper.PaymentMapper;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
 import com.iprody.payment.service.app.persistence.entity.Payment;
 import com.iprody.payment.service.app.persistence.entity.PaymentStatus;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,13 +30,14 @@ public class PaymentService {
 
     public List<PaymentDto> search() {
         return paymentRepository.findAll().stream()
-            .map(paymentMapper::toPaymentDto).toList();
+            .map(paymentMapper::toPaymentDto)
+            .toList();
     }
 
     public PaymentDto findById(UUID id) {
         return paymentRepository.findById(id)
             .map(paymentMapper::toPaymentDto)
-            .orElseThrow(() -> new EntityNotFoundException("Payment with id " + id + " not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Платеж не найден", OperationType.FIND_BY_ID, id));
     }
 
     public Page<PaymentDto> searchPaged(PaymentFilter filter, Pageable pageable) {
@@ -50,7 +52,7 @@ public class PaymentService {
     @Transactional
     public PaymentDto update(UUID id, PaymentDto dto) {
         final Payment payment = paymentRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Payment with id " + id + " not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Платеж не найден", OperationType.UPDATE, id));
 
         payment.setAmount(dto.getAmount());
         payment.setCurrency(dto.getCurrency());
@@ -67,14 +69,15 @@ public class PaymentService {
 
     public void delete(UUID id) {
         final Payment payment = paymentRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Payment with id " + id + " not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Платеж не найден", OperationType.DELETE, id));
+
         paymentRepository.delete(payment);
     }
 
     @Transactional
     public PaymentDto updateStatus(UUID id, PaymentStatus status) {
         final Payment payment = paymentRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Payment with id " + id + " not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Платеж не найден", OperationType.UPDATE_STATUS, id));
 
         payment.setStatus(status);
 
@@ -86,7 +89,7 @@ public class PaymentService {
     @Transactional
     public PaymentDto updateNote(UUID id, String note) {
         final Payment payment = paymentRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Payment with id " + id + " not found"));
+            .orElseThrow(() -> new EntityNotFoundException("Платеж не найден", OperationType.UPDATE_NOTE, id));
 
         payment.setNote(note);
 
@@ -94,5 +97,4 @@ public class PaymentService {
 
         return paymentMapper.toPaymentDto(updatedPayment);
     }
-
 }

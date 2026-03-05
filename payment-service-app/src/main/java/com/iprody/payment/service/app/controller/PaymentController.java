@@ -1,18 +1,20 @@
 package com.iprody.payment.service.app.controller;
 
-import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.dto.CreatePaymentDto;
+import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.dto.PaymentNoteUpdateDto;
 import com.iprody.payment.service.app.dto.PaymentStatusUpdateDto;
+import com.iprody.payment.service.app.exception.EntityNotFoundException;
+import com.iprody.payment.service.app.exception.errorhandle.ErrorResponseDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.services.PaymentService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.UUID;
@@ -80,5 +82,15 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         paymentService.delete(id);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponseDto handleNotFound(EntityNotFoundException ex) {
+        return new ErrorResponseDto(
+            ex.getMessage(),
+            ex.getOperation(),
+            ex.getEntityId()
+        );
     }
 }
