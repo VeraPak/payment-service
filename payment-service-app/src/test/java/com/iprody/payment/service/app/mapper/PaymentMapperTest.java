@@ -21,7 +21,7 @@ public class PaymentMapperTest {
     void shouldMapToDto(){
         // given
         Payment payment = new Payment();
-        payment.setGuid(UUID.randomUUID());
+        payment.setId(UUID.randomUUID());
         payment.setAmount(new BigDecimal("123.45"));
         payment.setCurrency("USD");
         payment.setInquiryRefId(UUID.randomUUID());
@@ -34,7 +34,7 @@ public class PaymentMapperTest {
 
         // then
         assertThat(dto).isNotNull();
-        assertThat(dto.getGuid()).isEqualTo(payment.getGuid());
+        assertThat(dto.getId()).isEqualTo(payment.getId());
         assertThat(dto.getAmount()).isEqualTo(payment.getAmount());
         assertThat(dto.getCurrency()).isEqualTo(payment.getCurrency());
         assertThat(dto.getInquiryRefId()).isEqualTo(payment.getInquiryRefId());
