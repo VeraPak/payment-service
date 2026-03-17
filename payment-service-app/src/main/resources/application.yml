@@ -1,9 +1,15 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   application:
     name: "payment-service-app"
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/iprody-lms
 
   datasource: # объединяет в себе параметры подключения к БД
     url: jdbc:postgresql://localhost:5432/payment-db # URL подключения к БД
@@ -22,3 +28,9 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
+
+logging:
+  level:
+    liquibase: debug
+    org.springframework.boot.autoconfigure.liquibase: DEBUG
+    org.springframework.security: DEBUG
