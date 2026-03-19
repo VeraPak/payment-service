@@ -15,7 +15,7 @@ import java.time.Duration;
 
 @SpringBootTest
 @Testcontainers
-public class AbstractPostgresIntegrationTest {
+public abstract class AbstractPostgresIntegrationTest {
 
     @MockitoBean
     private JwtDecoder jwtDecoder;
