@@ -6,7 +6,6 @@ import com.iprody.payment.service.app.dto.PaymentNoteUpdateDto;
 import com.iprody.payment.service.app.dto.PaymentStatusUpdateDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.services.PaymentService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,13 +73,13 @@ public class PaymentController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('admin')")
-    public PaymentDto updateStatus(@PathVariable UUID id, @RequestBody @Valid PaymentStatusUpdateDto dto) {
+    public PaymentDto updateStatus(@PathVariable UUID id, @RequestBody PaymentStatusUpdateDto dto) {
         return paymentService.updateStatus(id, dto.getStatus());
     }
 
     @PatchMapping("/{id}/note")
     @PreAuthorize("hasRole('admin')")
-    public PaymentDto updateNote(@PathVariable UUID id, @RequestBody @Valid PaymentNoteUpdateDto dto) {
+    public PaymentDto updateNote(@PathVariable UUID id, @RequestBody PaymentNoteUpdateDto dto) {
         return paymentService.updateNote(id, dto.getNote());
     }
 
