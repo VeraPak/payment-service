@@ -31,6 +31,14 @@ spring:
 
 logging:
   level:
-    liquibase: debug
-    org.springframework.boot.autoconfigure.liquibase: DEBUG
-    org.springframework.security: DEBUG
+    root: INFO
+    com.iprody.payment: DEBUG
+    org.springframework.web: INFO
+    org.springframework.data: INFO
+    org.springframework.security: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,loggers
