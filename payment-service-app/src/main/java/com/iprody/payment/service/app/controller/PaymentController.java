@@ -6,6 +6,7 @@ import com.iprody.payment.service.app.dto.PaymentNoteUpdateDto;
 import com.iprody.payment.service.app.dto.PaymentStatusUpdateDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.services.PaymentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +20,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/payments")
+@Slf4j
 public class PaymentController {
 
     private final PaymentService paymentService;
-
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
@@ -36,6 +37,8 @@ public class PaymentController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('admin', 'reader')")
     public PaymentDto findById(@PathVariable UUID id) {
+        log.info("GET payment id {}", id);
+
         return paymentService.findById(id);
     }
 
@@ -47,7 +50,8 @@ public class PaymentController {
         @RequestParam(defaultValue = "id") String sortBy,
         @RequestParam(defaultValue = "desc") String direction
     ) {
-        System.out.println(filter);
+        log.info("GET /search page {} size {}", page, size);
+
         final Sort sort = switch (direction) {
             case "asc" -> Sort.by(sortBy).ascending();
             case "desc" -> Sort.by(sortBy).descending();

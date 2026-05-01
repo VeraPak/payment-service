@@ -5,7 +5,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payment-db
     ports:
-      - "8080:8080"
+      - "8080:8082"
 
   postgres:
     image: postgres:16
