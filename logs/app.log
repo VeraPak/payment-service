@@ -1,0 +1,152 @@
+2026-05-06 20:43:46.122 INFO  25044 --- [main] service.app.PaymentServiceAppApplication : Starting PaymentServiceAppApplication using Java 21.0.11 with PID 25044 (C:\Users\pakve\IdeaProjects\payment-service\payment-service-app\target\classes started by pakve in C:\Users\pakve\IdeaProjects\payment-service)
+2026-05-06 20:43:46.124 DEBUG 25044 --- [main] service.app.PaymentServiceAppApplication : Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-05-06 20:43:46.125 INFO  25044 --- [main] service.app.PaymentServiceAppApplication : No active profile set, falling back to 1 default profile: "default"
+2026-05-06 20:43:46.962 INFO  25044 --- [main] r.config.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-06 20:43:47.020 INFO  25044 --- [main] r.config.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 44 ms. Found 1 JPA repository interface.
+2026-05-06 20:43:47.616 INFO  25044 --- [main] ingframework.boot.tomcat.TomcatWebServer : Tomcat initialized with port 8082 (http)
+2026-05-06 20:43:47.628 INFO  25044 --- [main] g.apache.coyote.http11.Http11NioProtocol : Initializing ProtocolHandler ["http-nio-8082"]
+2026-05-06 20:43:47.630 INFO  25044 --- [main] org.apache.catalina.core.StandardService : Starting service [Tomcat]
+2026-05-06 20:43:47.630 INFO  25044 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-05-06 20:43:47.696 INFO  25044 --- [main] servlet.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1531 ms
+2026-05-06 20:43:47.976 INFO  25044 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-06 20:43:49.021 WARN  25044 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Failed to initialize dependency 'liquibase' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/liquibase/autoconfigure/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+2026-05-06 20:43:49.024 INFO  25044 --- [main] org.apache.catalina.core.StandardService : Stopping service [Tomcat]
+2026-05-06 20:43:49.032 INFO  25044 --- [main] .logging.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-05-06 20:43:49.045 ERROR 25044 --- [main] g.springframework.boot.SpringApplication : Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Failed to initialize dependency 'liquibase' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/liquibase/autoconfigure/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:976)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:620)
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at com.iprody.payment.service.app.PaymentServiceAppApplication.main(PaymentServiceAppApplication.java:10)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/liquibase/autoconfigure/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1817)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:309)
+	... 10 common frames omitted
+Caused by: liquibase.exception.LiquibaseException: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:289)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1864)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1813)
+	... 17 common frames omitted
+Caused by: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:281)
+	at liquibase.Scope.lambda$child$0(Scope.java:214)
+	at liquibase.Scope.child(Scope.java:223)
+	at liquibase.Scope.child(Scope.java:213)
+	at liquibase.Scope.child(Scope.java:192)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:272)
+	... 19 common frames omitted
+Caused by: org.postgresql.util.PSQLException: Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:373)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:57)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+	at org.postgresql.Driver.makeConnection(Driver.java:448)
+	at org.postgresql.Driver.connect(Driver.java:298)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:276)
+	... 24 common frames omitted
+Caused by: java.net.ConnectException: Connection refused: getsockopt
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:694)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:542)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:751)
+	at org.postgresql.core.PGStream.createSocket(PGStream.java:261)
+	at org.postgresql.core.PGStream.<init>(PGStream.java:122)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:146)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:289)
+	... 36 common frames omitted
+2026-05-06 20:45:01.499 INFO  23300 --- [main] service.app.PaymentServiceAppApplication : Starting PaymentServiceAppApplication using Java 21.0.11 with PID 23300 (C:\Users\pakve\IdeaProjects\payment-service\payment-service-app\target\classes started by pakve in C:\Users\pakve\IdeaProjects\payment-service)
+2026-05-06 20:45:01.502 DEBUG 23300 --- [main] service.app.PaymentServiceAppApplication : Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-05-06 20:45:01.503 INFO  23300 --- [main] service.app.PaymentServiceAppApplication : No active profile set, falling back to 1 default profile: "default"
+2026-05-06 20:45:02.294 INFO  23300 --- [main] r.config.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-06 20:45:02.362 INFO  23300 --- [main] r.config.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 49 ms. Found 1 JPA repository interface.
+2026-05-06 20:45:02.990 INFO  23300 --- [main] ingframework.boot.tomcat.TomcatWebServer : Tomcat initialized with port 8082 (http)
+2026-05-06 20:45:03.002 INFO  23300 --- [main] g.apache.coyote.http11.Http11NioProtocol : Initializing ProtocolHandler ["http-nio-8082"]
+2026-05-06 20:45:03.004 INFO  23300 --- [main] org.apache.catalina.core.StandardService : Starting service [Tomcat]
+2026-05-06 20:45:03.004 INFO  23300 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-05-06 20:45:03.070 INFO  23300 --- [main] servlet.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1526 ms
+2026-05-06 20:45:03.326 INFO  23300 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-06 20:45:03.510 INFO  23300 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@64ec1459
+2026-05-06 20:45:03.511 INFO  23300 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-06 20:45:03.643 INFO  23300 --- [main] liquibase.database                       : Set default schema name to public
+2026-05-06 20:45:03.962 INFO  23300 --- [main] liquibase.changelog                      : Reading from public.databasechangelog
+2026-05-06 20:45:04.034 INFO  23300 --- [main] liquibase.ui                             : Database is up to date, no changesets to execute
+2026-05-06 20:45:04.036 INFO  23300 --- [main] liquibase.changelog                      : Reading from public.databasechangelog
+2026-05-06 20:45:04.045 INFO  23300 --- [main] liquibase.util                           : UPDATE SUMMARY
+2026-05-06 20:45:04.046 INFO  23300 --- [main] liquibase.util                           : Run:                          0
+2026-05-06 20:45:04.046 INFO  23300 --- [main] liquibase.util                           : Previously run:               5
+2026-05-06 20:45:04.046 INFO  23300 --- [main] liquibase.util                           : Filtered out:                 0
+2026-05-06 20:45:04.046 INFO  23300 --- [main] liquibase.util                           : -------------------------------
+2026-05-06 20:45:04.046 INFO  23300 --- [main] liquibase.util                           : Total change sets:            5
+2026-05-06 20:45:04.047 INFO  23300 --- [main] liquibase.util                           : Update summary generated
+2026-05-06 20:45:04.048 INFO  23300 --- [main] liquibase.command                        : Command execution complete
+2026-05-06 20:45:05.413 INFO  23300 --- [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-06 20:45:05.490 INFO  23300 --- [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-05-06 20:45:05.954 INFO  23300 --- [main] ersistenceunit.SpringPersistenceUnitInfo : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-06 20:45:06.017 WARN  23300 --- [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-06 20:45:06.037 INFO  23300 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/payment-db]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.13
+	Default catalog/schema: payment-db/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-06 20:45:07.068 INFO  23300 --- [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-06 20:45:07.121 INFO  23300 --- [main] a.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-06 20:45:07.232 INFO  23300 --- [main] .repository.query.QueryEnhancerFactories : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-06 20:45:07.418 WARN  23300 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-06 20:45:08.240 INFO  23300 --- [main] tuate.endpoint.web.EndpointLinksResolver : Exposing 5 endpoints beneath base path '/actuator'
+2026-05-06 20:45:08.322 INFO  23300 --- [main] g.apache.coyote.http11.Http11NioProtocol : Starting ProtocolHandler ["http-nio-8082"]
+2026-05-06 20:45:08.345 INFO  23300 --- [main] ingframework.boot.tomcat.TomcatWebServer : Tomcat started on port 8082 (http) with context path '/'
+2026-05-06 20:45:08.356 INFO  23300 --- [main] service.app.PaymentServiceAppApplication : Started PaymentServiceAppApplication in 7.477 seconds (process running for 8.307)
+2026-05-06 20:45:08.855 INFO  23300 --- [RMI TCP Connection(2)-192.168.10.132] e.ContainerBase.[Tomcat].[localhost].[/] : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-06 20:45:08.855 INFO  23300 --- [RMI TCP Connection(2)-192.168.10.132] gframework.web.servlet.DispatcherServlet : Initializing Servlet 'dispatcherServlet'
+2026-05-06 20:45:08.859 INFO  23300 --- [RMI TCP Connection(2)-192.168.10.132] gframework.web.servlet.DispatcherServlet : Completed initialization in 4 ms
+2026-05-06 20:48:10.885 INFO  23300 --- [http-nio-8082-exec-1] service.app.controller.PaymentController : GET payment id ac328a1a-1e60-4dd3-bee5-ed573d74c841
+2026-05-06 20:53:14.368 INFO  23300 --- [http-nio-8082-exec-5] service.app.controller.PaymentController : GET payment id ac328a1a-1e60-4dd3-bee5-ed573d74c841
+2026-05-06 20:58:26.932 INFO  23300 --- [pool-2-thread-1] p.services.XPaymentAdapterMessageHandler : Recieved message with id null and status PROCESSING
+2026-05-06 20:58:36.932 INFO  23300 --- [pool-2-thread-2] p.services.XPaymentAdapterMessageHandler : Recieved message with id null and status PROCESSING
+2026-05-06 20:58:46.935 INFO  23300 --- [pool-2-thread-1] p.services.XPaymentAdapterMessageHandler : Recieved message with id null and status SUCCEEDED
+2026-05-06 20:58:48.715 INFO  23300 --- [http-nio-8082-exec-5] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:51.020 INFO  23300 --- [http-nio-8082-exec-6] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:52.700 INFO  23300 --- [http-nio-8082-exec-7] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:54.111 INFO  23300 --- [http-nio-8082-exec-8] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:55.060 INFO  23300 --- [http-nio-8082-exec-10] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:55.917 INFO  23300 --- [http-nio-8082-exec-9] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:56.750 INFO  23300 --- [http-nio-8082-exec-2] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:57.588 INFO  23300 --- [http-nio-8082-exec-1] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:58.226 INFO  23300 --- [http-nio-8082-exec-3] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:58.715 INFO  23300 --- [http-nio-8082-exec-4] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:58:59.430 INFO  23300 --- [http-nio-8082-exec-5] service.app.controller.PaymentController : GET payment id 0eba44f4-f18f-4bc6-a588-2f8b1d36a92d
+2026-05-06 20:59:33.964 INFO  23300 --- [SpringApplicationShutdownHook] ngframework.boot.tomcat.GracefulShutdown : Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-06 20:59:33.970 INFO  23300 --- [tomcat-shutdown] ngframework.boot.tomcat.GracefulShutdown : Graceful shutdown complete
+2026-05-06 20:59:33.975 INFO  23300 --- [SpringApplicationShutdownHook] a.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-06 20:59:33.976 INFO  23300 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-05-06 20:59:33.979 INFO  23300 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

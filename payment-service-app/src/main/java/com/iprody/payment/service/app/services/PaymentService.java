@@ -1,10 +1,13 @@
 package com.iprody.payment.service.app.services;
 
+import com.iprody.payment.service.app.async.AsyncSender;
+import com.iprody.payment.service.app.async.XPaymentAdapterRequestMessage;
 import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.exception.EntityNotFoundException;
 import com.iprody.payment.service.app.exception.errorhandle.OperationType;
 import com.iprody.payment.service.app.mapper.PaymentMapper;
+import com.iprody.payment.service.app.mapper.XPaymentAdapterMapper;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
@@ -22,10 +25,18 @@ import java.util.UUID;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
+    private final AsyncSender<XPaymentAdapterRequestMessage> sender;
+    private final XPaymentAdapterMapper xPaymentAdapterMapper;
 
-    public PaymentService(PaymentRepository paymentRepository, PaymentMapper paymentMapper) {
+    public PaymentService(PaymentRepository paymentRepository,
+        PaymentMapper paymentMapper,
+        AsyncSender<XPaymentAdapterRequestMessage> sender,
+        XPaymentAdapterMapper xPaymentAdapterMapper) {
+
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
+        this.sender = sender;
+        this.xPaymentAdapterMapper = xPaymentAdapterMapper;
     }
 
     public List<PaymentDto> search() {
@@ -46,7 +57,12 @@ public class PaymentService {
     }
 
     public PaymentDto create(CreatePaymentDto dto) {
-        return paymentMapper.toPaymentDto(paymentRepository.save(paymentMapper.fromCreatePaymentDto(dto)));
+        final Payment payment = paymentMapper.fromCreatePaymentDto(dto);
+        final PaymentDto savedDto = paymentMapper.toPaymentDto(paymentRepository.save(payment));
+
+        sender.send(xPaymentAdapterMapper.toXPaymentAdapterRequestMessage(payment));
+
+        return savedDto;
     }
 
     @Transactional
