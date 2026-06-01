@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-@SpringBootTest
+@SpringBootTest(properties = {"spring.kafka.listener.auto-startup=false"})
 @ActiveProfiles("test")
 class PaymentServiceAppApplicationTests {
 
