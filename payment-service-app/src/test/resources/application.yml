@@ -4,6 +4,7 @@ spring:
     username: sa
     password: ""
     driver-class-name: org.h2.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,3 +16,17 @@ spring:
 
   liquibase:
     enabled: false
+
+  kafka:
+    listener:
+      auto-startup: false
+    consumer:
+      group-id: test-group
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+app:
+  kafka:
+    topics:
+      xpayment-adapter:
+        response: test-topic

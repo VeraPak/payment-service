@@ -2,6 +2,7 @@ package com.iprody.payment.service.app;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -10,15 +11,20 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.kafka.KafkaContainer;
 
 import java.time.Duration;
 
 @SpringBootTest
 @Testcontainers
+@ActiveProfiles("test")
 public abstract class AbstractPostgresIntegrationTest {
 
     @MockitoBean
     private JwtDecoder jwtDecoder;
+
+    @Container
+    protected static final KafkaContainer kafka = new KafkaContainer("apache/kafka-native:3.8.0");
 
     @Container
     protected static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16")
@@ -42,5 +48,8 @@ public abstract class AbstractPostgresIntegrationTest {
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
         registry.add("spring.liquibase.enabled", () -> true);
+        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+        registry.add("app.kafka.topics.xpayment-adapter.response", () -> "test-topic");
+        registry.add("spring.kafka.listener.auto-startup", () -> "false");
     }
 }
